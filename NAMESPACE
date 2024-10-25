@@ -2,6 +2,7 @@
 
 export(load_dardar_origin_2D)
 export(load_dardar_origin_3D)
+export(load_data)
 import(dplyr)
 importFrom(dplyr,arrange)
 importFrom(dplyr,filter)
