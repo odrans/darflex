@@ -105,14 +105,14 @@ write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
                             name = "n_part", units = "-", longname = "Number of particles (FLEXPART)",
                             dim = l_dim, missval = fill_value, compression = 5, prec = "integer",
                             chunksizes = NA)
-  print(str(vardef_n_part))
+  ##print(str(vardef_n_part))
 
   print("... vardef_origin_quality")
   vardef_origin_quality <- ncdf4::ncvar_def(
                             name = "origin_quality", units = "-", longname = "Number of particles (FLEXPART)",
                             dim = l_dim, missval = fill_value, compression = 5, prec = "integer"
                           )
-  print(str(vardef_origin_quality))
+  ##print(str(vardef_origin_quality))
 
   print("... vardef_origin")
   vardef_origin <- ncdf4::ncvar_def(
@@ -157,7 +157,7 @@ write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
                 vardef_lat_orig, vardef_lon_orig)
 
   if(file.exists(fn_out)) null <- file.remove(fn_out)
-  nc_new <- ncdf4::nc_create(fn_out, l_var, force_v4 = TRUE)
+  nc_new <- ncdf4::nc_create(fn_out, l_var, force_v4 = TRUE, verbose = TRUE)
 
   ## Put data into variables
   print("Writing variables...")
