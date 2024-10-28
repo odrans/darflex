@@ -17,6 +17,10 @@
 #'
 write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
 
+  ## df_dardar_flex <- readRDS("/home/b/b380333/storage/scratch/tmp/dardar_flex/DARNI_PRO_origin_v2.0_20100203185536_.rds")
+  ## fn_dardar <- "/home/b/b380333/storage/data/satellite/DARDAR-Nice/DARNI_L2_PRO.v2.0/2010/2010_02_03/DARNI_PRO_L2_v2.0_20100203185536.nc"
+  ## fn_out <- "/home/b/b380333/storage/scratch/tmp/dardar_flex/DARNI_PRO_origin_v2.0_20100203185536_.nc"
+
   if(file.exists(fn_out)) null <- file.remove(fn_out)
 
   fill_value <- -999
@@ -100,54 +104,49 @@ write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
   vardef_n_part <- ncdf4::ncvar_def(
                             name = "n_part", units = "-", longname = "Number of particles (FLEXPART)",
                             dim = l_dim, missval = fill_value, compression = 5, prec = "integer",
-                            chunksizes = NULL)
+                            chunksizes = NA)
+  print(str(vardef_n_part))
 
   print("... vardef_origin_quality")
   vardef_origin_quality <- ncdf4::ncvar_def(
                             name = "origin_quality", units = "-", longname = "Number of particles (FLEXPART)",
-                            dim = l_dim, missval = fill_value, compression = 5, prec = "integer",
-                            chunksizes = c(n_height, min(n_time, 1024))
+                            dim = l_dim, missval = fill_value, compression = 5, prec = "integer"
                           )
+  print(str(vardef_origin_quality))
 
   print("... vardef_origin")
   vardef_origin <- ncdf4::ncvar_def(
                             name = "origin", units = "-", longname = "Ice cloud origin",
-                            dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                            chunksizes = c(n_height, min(n_time, 1024))
+                            dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                           )
 
   print("... vardef_origin_sd")
   vardef_origin_sd <- ncdf4::ncvar_def(
                                name = "origin_sd", units = "-", longname = "Ice cloud origin standard deviation",
-                               dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                               chunksizes = c(n_height, min(n_time, 1024))
+                               dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                              )
 
   print("... vardef_dt_cloud")
   vardef_dt_cloud <- ncdf4::ncvar_def(
                             name = "dt_cloud", units = "-", longname = "Ice cloud dt_cloud",
-                            dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                            chunksizes = c(n_height, min(n_time, 1024))
+                            dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                           )
  print("... vardef_ta")
   vardef_ta <- ncdf4::ncvar_def(
                         name = "ta_origin", units = "K", longname = "Temperature at ice formation",
-                        dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                        chunksizes = c(n_height, min(n_time, 1024))
+                        dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                       )
 
   print("... vardef_lat_orig")
   vardef_lat_orig <- ncdf4::ncvar_def(
                        name = "lat_origin", units = "", longname = "Latitude at ice formation",
-                       dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                       chunksizes = c(n_height, min(n_time, 1024))
+                       dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                      )
 
   print("... vardef_lon_orig")
   vardef_lon_orig <- ncdf4::ncvar_def(
                               name = "lon_origin", units = "", longname = "Longitude at ice formation",
-                              dim = l_dim, missval = fill_value, compression = 5, prec = "float",
-                              chunksizes = c(n_height, min(n_time, 1024))
+                              dim = l_dim, missval = fill_value, compression = 5, prec = "float"
                             )
 
 
@@ -161,17 +160,30 @@ write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
   nc_new <- ncdf4::nc_create(fn_out, l_var, force_v4 = TRUE)
 
   ## Put data into variables
+  print("Writing variables...")
+  print("... vardef_lat")
   ncdf4::ncvar_put(nc_new, vardef_lat, var_lat)
+  print("... vardef_lon")
   ncdf4::ncvar_put(nc_new, vardef_lon, var_lon)
+  print("... vardef_basetime")
   ncdf4::ncvar_put(nc_new, vardef_basetime, var_basetime)
+  print("... vardef_dtime")
   ncdf4::ncvar_put(nc_new, vardef_dtime, var_dtime)
+  print("... vardef_n_part")
   ncdf4::ncvar_put(nc_new, vardef_n_part, var_n_part)
+  print("... vardef_origin_quality")
   ncdf4::ncvar_put(nc_new, vardef_origin_quality, var_origin_quality)
+  print("... vardef_origin")
   ncdf4::ncvar_put(nc_new, vardef_origin, var_origin)
+  print("... vardef_origin_sd")
   ncdf4::ncvar_put(nc_new, vardef_origin_sd, var_origin_sd)
+  print("... vardef_dt_cloud")
   ncdf4::ncvar_put(nc_new, vardef_dt_cloud, var_dt_cloud)
+  print("... vardef_ta")
   ncdf4::ncvar_put(nc_new, vardef_ta, var_ta)
+  print("... vardef_lat_orig")
   ncdf4::ncvar_put(nc_new, vardef_lat_orig, var_lat_orig)
+  print("... vardef_lon_orig")
   ncdf4::ncvar_put(nc_new, vardef_lon_orig, var_lon_orig)
 
   ## Close the NetCDF file to write and save it
