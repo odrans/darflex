@@ -65,6 +65,8 @@ load_data <- function(fn_flex, lf_dardar, dir_out, overwrite = FALSE, suffix = "
   rm(df_flex_overpass, df_dardar)
 
   print(str(df_dardar_flex))
+  fn_out_rds <- gsub(".nc", ".rds", fn_out)
+  saveRDS(df_dardar_flex, fn_out_rds)
 
   ## Write the data
   print("Writing data")
