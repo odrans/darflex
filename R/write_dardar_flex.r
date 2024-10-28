@@ -40,6 +40,11 @@ write_dardar_flex <- function(df_dardar_flex, fn_dardar, fn_out) {
   vardef_basetime <- nc_dardar$var$base_time
   vardef_dtime <- nc_dardar$var$dtime
 
+  vardef_lat$chunksizes <- NA
+  vardef_lon$chunksizes <- NA
+  vardef_basetime$chunksizes <- NA
+  vardef_dtime$chunksizes <- NA
+
   ## Variable values
   var_lat <- c(ncdf4::ncvar_get(nc_dardar, "lat"))
   var_lon <- c(ncdf4::ncvar_get(nc_dardar, "lon"))
