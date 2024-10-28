@@ -64,6 +64,8 @@ load_data <- function(fn_flex, lf_dardar, dir_out, overwrite = FALSE, suffix = "
   df_dardar_flex <- merge_dardar_flex(df_flex_overpass, df_dardar)
   rm(df_flex_overpass, df_dardar)
 
+  print(str(df_dardar_flex))
+
   ## Write the data
   print("Writing data")
   null <- write_dardar_flex(df_dardar_flex, fn_dardar, fn_out)
