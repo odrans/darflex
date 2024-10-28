@@ -34,44 +34,28 @@ load_data <- function(fn_flex, lf_dardar, dir_out, overwrite = FALSE, suffix = "
     stop("Files not found")
   }
 
-  fn_out_rds <- gsub(".nc", ".rds", fn_out)
-  if(file.exists(fn_out_rds)) {
-    df_dardar_flex <- readRDS(fn_out_rds)
-  } else {
+  ## Read the Flexpart data
+  df_flex <- read_flexpart(fn_flex)
+  if(is.null(df_flex)) return(NULL)
 
-    ## Check the files
-    print(paste0("fn_dardar: ", fn_dardar))
-    print(paste0("fn_flex: ", fn_flex))
-    print(paste0("fn_out: ", fn_out))
+  ## Compute the origin of the particles
+  df_origin <- find_origin_overpass(df_flex)
 
-    ## Read the Flexpart data
-    print("Reading FLEXPART data")
-    df_flex <- read_flexpart(fn_flex)
-    if(is.null(df_flex)) return(NULL)
+  ## Keep the overpass information from Flexpart
+  df_flex_overpass <- dplyr::inner_join(dplyr::filter(df_flex, time_traj == 0),
+                                        dplyr::select(df_origin, c(particle, origin, origin_quality, dt_cloud,
+                                                                   lat_origin, lon_origin, ta_origin)),
+                                        by = "particle")
+  rm(df_origin, df_flex)
 
-    ## Compute the origin of the particles
-    print("Computing particle origins")
-    df_origin <- find_origin_overpass(df_flex)
+  ## Read the DARDAR data
+  df_dardar <- read_dardar(fn_dardar)
 
-    ## Keep the overpass information from Flexpart
-    df_flex_overpass <- dplyr::inner_join(dplyr::filter(df_flex, time_traj == 0),
-                                          dplyr::select(df_origin, c(particle, origin, origin_quality, dt_cloud,
-                                                                     lat_origin, lon_origin, ta_origin)),
-                                          by = "particle")
-    rm(df_origin, df_flex)
-
-    ## Read the DARDAR data
-    print("Reading DARDAR data")
-    df_dardar <- read_dardar(fn_dardar)
-
-    ## Merge DARDAR with the FLEXPART data (at the overpass time)
-    print("Merging FLEXPART and DARDAR data")
-    df_dardar_flex <- merge_dardar_flex(df_flex_overpass, df_dardar)
-    rm(df_flex_overpass, df_dardar)
-  }
+  ## Merge DARDAR with the FLEXPART data (at the overpass time)
+  df_dardar_flex <- merge_dardar_flex(df_flex_overpass, df_dardar)
+  rm(df_flex_overpass, df_dardar)
 
   ## Write the data
-  print("Writing data")
   null <- write_dardar_flex(df_dardar_flex, fn_dardar, fn_out)
   rm(df_dardar_flex)
   gc()
